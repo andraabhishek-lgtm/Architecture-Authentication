@@ -72,8 +72,13 @@
       border: none; background: none; width: 100%; text-align: left;
     }
     .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
-    .nav-item.active { background: rgba(74,144,192,0.25); color: #fff; border: 1px solid rgba(74,144,192,0.3); }
+    .nav-item:hover { background: rgba(255,255,255,0.09); color: #fff; transform: translateX(3px); }
+    .nav-item:active { transform: scale(0.97); }
+    .nav-item.active {
+      background: rgba(74,144,192,0.28); color: #fff;
+      border: 1px solid rgba(74,144,192,0.35);
+      box-shadow: inset 3px 0 0 #4a90c0;
+    }
 
     .nav-label { font-size: 11px; color: rgba(255,255,255,0.25); padding: 14px 14px 6px; letter-spacing: 1.2px; text-transform: uppercase; }
 
@@ -371,10 +376,11 @@
     .hamburger:hover { background: rgba(74,144,192,0.5); }
 
     .sidebar-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.48); z-index: 29;
+      display: none; position: fixed; top: 0; bottom: 0; right: 0;
+      background: rgba(0,0,0,0.52); z-index: 28;
     }
-    .sidebar-overlay.open { display: block; }
+    .sidebar-overlay.open { display: block; left: 240px; }
+    @media (max-width: 380px) { .sidebar-overlay.open { left: 220px; } }
 
     /* ── SIDEBAR COLLAPSE (desktop) ── */
     .sidebar {
@@ -386,17 +392,23 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .hamburger { display: flex; }
-      body { overflow-y: auto !important; }
-      .layout { height: auto; overflow: visible; }
+      body { overflow: hidden !important; }
+      .layout { height: 100vh; overflow: hidden; }
+      .main {
+        overflow-y: auto; height: 100vh;
+        padding: 76px 16px 130px;
+      }
       .sidebar {
         position: fixed !important; left: -260px; top: 0; bottom: 0;
-        height: 100vh; z-index: 30; width: 240px !important;
+        height: 100vh; z-index: 200 !important; width: 240px !important;
         padding-top: 70px !important;
         transition: left 0.28s cubic-bezier(0.4,0,0.2,1) !important;
+        overflow-y: auto;
       }
       .sidebar.open { left: 0 !important; }
+      .nav-item { padding: 14px 14px; font-size: 14px; }
+      .logout-btn { padding: 14px 14px; }
       .sidebar.collapsed { width: 240px !important; }
-      .main { padding: 76px 16px 130px; }
       .topbar {
         flex-wrap: nowrap; gap: 8px; margin-bottom: 20px;
         padding-left: 58px; align-items: center;
@@ -413,18 +425,28 @@
       .panel[style*="align-items:center"] { flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; gap: 12px; }
       .scroll-strip { left: 0 !important; }
     }
-    @media (max-width: 520px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .main { padding: 68px 10px 130px; }
-      .topbar { padding-left: 56px; }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .main { padding: 70px 14px 120px; }
+      .topbar { padding-left: 58px; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr !important; }
+      .main { padding: 66px 10px 115px; }
       .topbar h1 { font-size: 15px; }
       .chart-wrap { height: 160px !important; }
       .dropdown {
         position: fixed !important;
-        top: 66px !important; left: 10px !important; right: 10px !important;
+        top: 64px !important; left: 8px !important; right: 8px !important;
         min-width: unset !important; width: auto !important;
       }
       .notify-btn, .avatar { width: 34px; height: 34px; }
+    }
+    @media (max-width: 380px) {
+      .main { padding: 62px 8px 110px; }
+      .topbar h1 { font-size: 13px; }
+      .topbar-right { gap: 6px; }
+      .sidebar { width: 220px !important; }
     }
 
     /* scroll strip */
@@ -453,8 +475,15 @@
       from { transform: translateX(0); }
       to   { transform: translateX(-50%); }
     }
+    @keyframes secIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     .section { display: none; }
-    .section.active { display: block; }
+    .section.active {
+      display: block;
+      animation: secIn 0.32s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
   </style>
 </head>
 <body>
@@ -925,8 +954,18 @@
   const overlay = document.getElementById('sidebarOverlay');
   const sidebar = document.querySelector('.sidebar');
 
-  function openSidebar()  { sidebar.classList.add('open');    overlay.classList.add('open'); }
-  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+    ham.innerHTML = '&#10005;';
+    ham.setAttribute('aria-label', 'Close menu');
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+    ham.innerHTML = '&#9776;';
+    ham.setAttribute('aria-label', 'Open menu');
+  }
 
   ham.addEventListener('click', function(e) {
     e.stopPropagation();
@@ -946,7 +985,10 @@
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const btn = document.querySelector(`.nav-item[data-sec="${name}"]`);
     if (btn) btn.classList.add('active');
-    if (window.innerWidth <= 900) closeSidebar();
+    closeSidebar();
+    const main = document.querySelector('.main');
+    if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   /* ── Revenue Area Chart ── */
