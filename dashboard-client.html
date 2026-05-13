@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Client Dashboard | RoleBase</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh; overflow: hidden; color: #1a3050;
+    }
+
+    .bg-scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+
+    .layout { position: relative; z-index: 10; display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: rgba(10,35,60,0.72);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      display: flex; flex-direction: column;
+      padding: 32px 0 24px;
+    }
+
+    .sidebar-brand {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 24px 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #4a90c0, #2a6090);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    }
+    .brand-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; }
+    .brand-name { font-size: 18px; font-weight: 800; color: #fff; }
+    .brand-role { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; }
+
+    .sidebar-nav { flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+
+    .nav-label { font-size: 11px; color: rgba(255,255,255,0.25); padding: 14px 14px 6px; letter-spacing: 1.2px; text-transform: uppercase; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 10px;
+      color: rgba(255,255,255,0.6); font-size: 13.5px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+    .nav-item.active { background: rgba(74,144,192,0.25); color: #fff; border: 1px solid rgba(74,144,192,0.3); }
+
+    .sidebar-footer { padding: 16px 12px 0; border-top: 1px solid rgba(255,255,255,0.08); }
+    .logout-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-radius: 10px;
+      color: rgba(255,100,100,0.7); font-size: 13.5px;
+      cursor: pointer; border: none; background: none;
+      width: 100%; transition: all 0.2s; font-family: inherit;
+    }
+    .logout-btn:hover { background: rgba(255,80,80,0.1); color: #ff6b6b; }
+    .logout-btn svg { width: 18px; height: 18px; }
+
+    /* ── MAIN ── */
+    .main { flex: 1; overflow-y: auto; padding: 32px 32px 120px; }
+
+    .main::-webkit-scrollbar { width: 5px; }
+    .main::-webkit-scrollbar-track { background: transparent; }
+    .main::-webkit-scrollbar-thumb { background: rgba(74,144,192,0.3); border-radius: 4px; }
+
+    /* topbar */
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .topbar h1 { font-size: 22px; font-weight: 800; color: #1a3050; }
+    .topbar p  { font-size: 13px; color: #4a6a8a; margin-top: 2px; }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #059669, #047857);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 15px;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .notify-btn {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.35); border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; backdrop-filter: blur(10px);
+    }
+    .notify-btn svg { width: 18px; height: 18px; color: #1a3050; }
+    .notify-dot { position: absolute; top: 7px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; border: 1.5px solid #fff; }
+
+    /* welcome banner */
+    .welcome-banner {
+      background: linear-gradient(135deg, rgba(74,144,192,0.35), rgba(42,96,144,0.3));
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.45);
+      border-radius: 20px; padding: 28px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 24px rgba(30,80,130,0.12);
+    }
+    .welcome-text h2 { font-size: 20px; font-weight: 800; color: #1a3050; margin-bottom: 6px; }
+    .welcome-text p  { font-size: 13px; color: #4a6a8a; line-height: 1.6; }
+    .welcome-action {
+      padding: 11px 24px;
+      background: linear-gradient(135deg, #4a90c0, #2a6090);
+      border: none; border-radius: 12px;
+      color: #fff; font-size: 13px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; font-family: inherit;
+      box-shadow: 0 4px 16px rgba(42,90,140,0.35);
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .welcome-action:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* stat cards */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-bottom: 22px;
+    }
+    .stat-card {
+      background: rgba(200,225,245,0.22);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.45);
+      border-radius: 18px; padding: 20px;
+      box-shadow: 0 4px 24px rgba(30,80,130,0.1);
+    }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+    }
+    .stat-icon svg { width: 19px; height: 19px; }
+    .stat-icon.blue   { background: rgba(59,130,246,0.15); color: #2563eb; }
+    .stat-icon.green  { background: rgba(16,185,129,0.15); color: #059669; }
+    .stat-icon.amber  { background: rgba(245,158,11,0.15); color: #d97706; }
+    .stat-value { font-size: 26px; font-weight: 800; color: #1a3050; }
+    .stat-label { font-size: 12px; color: #4a6a8a; margin-top: 4px; font-weight: 500; }
+    .stat-sub   { font-size: 11px; color: #6a90aa; margin-top: 8px; }
+
+    /* chart row */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .chart-wrap { position: relative; height: 190px; }
+
+    /* content grid */
+    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+    /* panel */
+    .panel {
+      background: rgba(200,225,245,0.22);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.45);
+      border-radius: 18px; padding: 20px 22px;
+      box-shadow: 0 4px 24px rgba(30,80,130,0.1);
+    }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .panel-title  { font-size: 15px; font-weight: 700; color: #1a3050; }
+    .panel-action { font-size: 12px; color: #3a7aaa; font-weight: 600; cursor: pointer; text-decoration: none; }
+
+    /* project items */
+    .project-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .project-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .proj-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .proj-icon svg { width: 17px; height: 17px; }
+    .proj-icon.blue   { background: rgba(59,130,246,0.15); color: #2563eb; }
+    .proj-icon.green  { background: rgba(16,185,129,0.15); color: #059669; }
+    .proj-icon.purple { background: rgba(139,92,246,0.15); color: #7c3aed; }
+    .proj-icon.amber  { background: rgba(245,158,11,0.15); color: #d97706; }
+
+    .proj-info { flex: 1; }
+    .proj-name  { font-size: 13px; font-weight: 600; color: #1a3050; }
+    .proj-desc  { font-size: 11px; color: #6a90aa; margin-top: 2px; }
+
+    .proj-progress { margin-top: 6px; }
+    .progress-bar  { height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 2px; }
+    .progress-text { font-size: 11px; color: #6a90aa; margin-top: 3px; }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .badge.paid     { background: rgba(16,185,129,0.15); color: #059669; }
+    .badge.due      { background: rgba(245,158,11,0.15);  color: #d97706; }
+    .badge.overdue  { background: rgba(239,68,68,0.15);   color: #dc2626; }
+    .badge.open     { background: rgba(59,130,246,0.15);  color: #2563eb; }
+    .badge.resolved { background: rgba(107,114,128,0.15); color: #6b7280; }
+
+    /* invoice rows */
+    .inv-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .inv-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .inv-id   { font-size: 13px; font-weight: 600; color: #1a3050; }
+    .inv-date { font-size: 11px; color: #6a90aa; margin-top: 2px; }
+    .inv-amt  { font-size: 14px; font-weight: 700; color: #1a3050; margin-right: 12px; }
+    .inv-right { display: flex; align-items: center; gap: 10px; }
+
+    /* ticket rows */
+    .ticket-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .ticket-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .ticket-num  { font-size: 12px; font-weight: 700; color: #3a7aaa; }
+    .ticket-subj { font-size: 13px; font-weight: 500; color: #1a3050; }
+    .ticket-date { font-size: 11px; color: #6a90aa; margin-top: 2px; }
+
+    /* scroll strip */
+    .scroll-strip {
+      position: fixed; bottom: 0; left: 240px; right: 0;
+      height: 105px; z-index: 5; overflow: hidden; padding: 8px 0;
+    }
+    .scroll-strip::before, .scroll-strip::after {
+      content: ''; position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2; pointer-events: none;
+    }
+    .scroll-strip::before { left: 0;  background: linear-gradient(to right, rgba(100,165,200,0.5), transparent); }
+    .scroll-strip::after  { right: 0; background: linear-gradient(to left,  rgba(100,165,200,0.5), transparent); }
+    .scroll-track { display: flex; gap: 10px; width: max-content; animation: scrollLeft 35s linear infinite; }
+    .scroll-track:hover { animation-play-state: paused; }
+    .scroll-track img {
+      height: 82px; width: 140px; object-fit: cover;
+      border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.3);
+      opacity: 0.72; flex-shrink: 0; transition: opacity 0.2s, transform 0.2s;
+    }
+    .scroll-track img:hover { opacity: 1; transform: scale(1.05); }
+    @keyframes scrollLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  </style>
+</head>
+<body>
+
+<!-- SVG MOUNTAIN BACKGROUND -->
+<svg class="bg-scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#dff0fa"/>
+      <stop offset="25%"  stop-color="#c8e4f5"/>
+      <stop offset="55%"  stop-color="#a6cfe8"/>
+      <stop offset="100%" stop-color="#7ab8d8"/>
+    </linearGradient>
+    <radialGradient id="sunG" cx="50%" cy="26%" r="32%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,1)"/>
+      <stop offset="40%"  stop-color="rgba(220,240,255,0.5)"/>
+      <stop offset="100%" stop-color="rgba(180,225,255,0)"/>
+    </radialGradient>
+    <linearGradient id="m1G" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9acbdf"/><stop offset="100%" stop-color="#78b0cc"/></linearGradient>
+    <linearGradient id="m2G" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5592b5"/><stop offset="100%" stop-color="#3f7da0"/></linearGradient>
+    <linearGradient id="m3G" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2d6585"/><stop offset="100%" stop-color="#1c4f6a"/></linearGradient>
+  </defs>
+  <rect width="1440" height="900" fill="url(#skyG)"/>
+  <ellipse cx="720" cy="210" rx="420" ry="300" fill="url(#sunG)"/>
+  <g opacity="0.5"><ellipse cx="240" cy="175" rx="95" ry="26" fill="rgba(255,255,255,0.8)"/><ellipse cx="295" cy="162" rx="70" ry="22" fill="rgba(255,255,255,0.85)"/></g>
+  <g opacity="0.45"><ellipse cx="1180" cy="145" rx="105" ry="28" fill="rgba(255,255,255,0.75)"/><ellipse cx="1250" cy="133" rx="75" ry="22" fill="rgba(255,255,255,0.8)"/></g>
+  <path d="M-10,900 L-10,530 L70,460 L150,510 L240,385 L330,455 L420,320 L510,400 L600,275 L680,350 L760,238 L840,315 L920,260 L1000,338 L1080,285 L1160,358 L1240,305 L1320,372 L1450,355 L1450,900 Z" fill="url(#m1G)"/>
+  <path d="M-10,900 L-10,630 L90,558 L178,612 L268,498 L358,568 L448,448 L538,528 L628,462 L718,396 L808,470 L898,412 L988,502 L1078,444 L1168,524 L1258,464 L1348,534 L1450,510 L1450,900 Z" fill="url(#m2G)"/>
+  <path d="M-10,900 L-10,732 L88,668 L176,728 L268,638 L358,708 L452,596 L548,672 L644,628 L740,688 L836,638 L932,702 L1028,648 L1124,714 L1220,662 L1316,724 L1450,702 L1450,900 Z" fill="url(#m3G)"/>
+</svg>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">RoleBase</div>
+        <div class="brand-role">Client Portal</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-label">My Space</span>
+      <a class="nav-item active" href="#">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Overview
+      </a>
+      <a class="nav-item" href="404.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        My Projects
+      </a>
+      <a class="nav-item" href="404.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Invoices
+      </a>
+      <span class="nav-label">Support</span>
+      <a class="nav-item" href="404.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Tickets
+      </a>
+      <a class="nav-item" href="404.html">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+        My Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="window.location.href='login.html'">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <h1>Welcome, Arun 👋</h1>
+        <p>Here's an overview of your projects and account.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notify-btn">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notify-dot"></div>
+        </div>
+        <div class="avatar">A</div>
+      </div>
+    </div>
+
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2>Your Smart Office Design project is 72% complete</h2>
+        <p>Next milestone: Interior planning review on 18 May 2026. Stay on track!</p>
+      </div>
+      <button class="welcome-action" onclick="window.location.href='404.html'">View Project →</button>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        </div>
+        <div class="stat-value">3</div>
+        <div class="stat-label">Active Projects</div>
+        <div class="stat-sub">1 completing this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="stat-value">₹18,500</div>
+        <div class="stat-label">Amount Due</div>
+        <div class="stat-sub">Due by 20 May 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="stat-value">2</div>
+        <div class="stat-label">Open Tickets</div>
+        <div class="stat-sub">Avg. response: 4 hrs</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="chart-grid">
+      <!-- Monthly Spending Bar -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Monthly Spending</span>
+          <span style="font-size:12px;color:#6a90aa;">Last 6 months</span>
+        </div>
+        <div class="chart-wrap"><canvas id="spendChart"></canvas></div>
+      </div>
+
+      <!-- Project Progress Donut -->
+      <div class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div class="panel-header" style="width:100%">
+          <span class="panel-title">Project Progress</span>
+        </div>
+        <div class="chart-wrap" style="height:150px;width:150px">
+          <canvas id="progressChart"></canvas>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;justify-content:center">
+          <span style="font-size:11px;color:#2563eb;display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:#2563eb;display:inline-block"></span>Smart Office</span>
+          <span style="font-size:11px;color:#10b981;display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:#10b981;display:inline-block"></span>Villa Ph.2</span>
+          <span style="font-size:11px;color:#8b5cf6;display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:#8b5cf6;display:inline-block"></span>Interior</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-grid">
+
+      <!-- Projects -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">My Projects</span>
+          <a href="404.html" class="panel-action">View all →</a>
+        </div>
+        <div>
+          <div class="project-item">
+            <div class="proj-icon blue">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <div class="proj-info" style="flex:1">
+              <div class="proj-name">Smart Office Design</div>
+              <div class="proj-progress" style="margin-top:6px">
+                <div class="progress-bar"><div class="progress-fill" style="width:72%;background:linear-gradient(90deg,#3b82f6,#2563eb)"></div></div>
+                <div class="progress-text">72% complete</div>
+              </div>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="proj-icon green">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+            </div>
+            <div class="proj-info" style="flex:1">
+              <div class="proj-name">Residential Villa — Phase 2</div>
+              <div class="proj-progress" style="margin-top:6px">
+                <div class="progress-bar"><div class="progress-fill" style="width:38%;background:linear-gradient(90deg,#10b981,#059669)"></div></div>
+                <div class="progress-text">38% complete</div>
+              </div>
+            </div>
+          </div>
+          <div class="project-item">
+            <div class="proj-icon purple">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 2,7 12,12 22,7"/><polyline points="2,17 12,22 22,17"/><polyline points="2,12 12,17 22,12"/></svg>
+            </div>
+            <div class="proj-info" style="flex:1">
+              <div class="proj-name">Interior Planning — Bengaluru</div>
+              <div class="proj-progress" style="margin-top:6px">
+                <div class="progress-bar"><div class="progress-fill" style="width:15%;background:linear-gradient(90deg,#8b5cf6,#7c3aed)"></div></div>
+                <div class="progress-text">15% complete — Just started</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+
+        <!-- Invoices -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Recent Invoices</span>
+            <a href="404.html" class="panel-action">View all →</a>
+          </div>
+          <div>
+            <div class="inv-row">
+              <div><div class="inv-id">#INV-2048</div><div class="inv-date">Issued: 01 May 2026</div></div>
+              <div class="inv-right"><span class="inv-amt">₹45,000</span><span class="badge paid">Paid</span></div>
+            </div>
+            <div class="inv-row">
+              <div><div class="inv-id">#INV-2051</div><div class="inv-date">Due: 20 May 2026</div></div>
+              <div class="inv-right"><span class="inv-amt">₹18,500</span><span class="badge due">Due</span></div>
+            </div>
+            <div class="inv-row">
+              <div><div class="inv-id">#INV-2039</div><div class="inv-date">Due: 28 Apr 2026</div></div>
+              <div class="inv-right"><span class="inv-amt">₹12,000</span><span class="badge overdue">Overdue</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Tickets -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Support Tickets</span>
+            <a href="404.html" class="panel-action">New ticket +</a>
+          </div>
+          <div>
+            <div class="ticket-row">
+              <div style="flex:1">
+                <div class="ticket-num">#TK-209</div>
+                <div class="ticket-subj">Revision request — floor plan</div>
+                <div class="ticket-date">Opened: 11 May 2026</div>
+              </div>
+              <span class="badge open">Open</span>
+            </div>
+            <div class="ticket-row">
+              <div style="flex:1">
+                <div class="ticket-num">#TK-197</div>
+                <div class="ticket-subj">Material sample delivery delay</div>
+                <div class="ticket-date">Opened: 04 May 2026</div>
+              </div>
+              <span class="badge open">Open</span>
+            </div>
+            <div class="ticket-row">
+              <div style="flex:1">
+                <div class="ticket-num">#TK-185</div>
+                <div class="ticket-subj">Invoice discrepancy — INV-2039</div>
+                <div class="ticket-date">Opened: 28 Apr 2026</div>
+              </div>
+              <span class="badge resolved">Resolved</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- SCROLL STRIP -->
+<div class="scroll-strip">
+  <div class="scroll-track">
+    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+  </div>
+</div>
+
+<script>
+  /* ── Monthly Spending Bar Chart ── */
+  const sCtx = document.getElementById('spendChart').getContext('2d');
+  const barGrad = sCtx.createLinearGradient(0, 0, 0, 190);
+  barGrad.addColorStop(0, 'rgba(74,144,192,0.85)');
+  barGrad.addColorStop(1, 'rgba(42,96,144,0.4)');
+
+  new Chart(sCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Dec','Jan','Feb','Mar','Apr','May'],
+      datasets: [{
+        label: 'Spent (₹)',
+        data: [28000, 45000, 12000, 60000, 38000, 75500],
+        backgroundColor: barGrad,
+        borderColor: 'rgba(74,144,192,0.9)',
+        borderWidth: 1.5,
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          titleColor: '#1a3050', bodyColor: '#4a6a8a',
+          borderColor: 'rgba(74,144,192,0.3)', borderWidth: 1,
+          callbacks: { label: ctx => ' ₹' + ctx.raw.toLocaleString('en-IN') }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6a90aa', font: { size: 11 } } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.2)' },
+          ticks: { color: '#6a90aa', font: { size: 11 }, callback: v => '₹' + (v/1000) + 'K' }
+        }
+      }
+    }
+  });
+
+  /* ── Project Progress Donut ── */
+  const pCtx = document.getElementById('progressChart').getContext('2d');
+  new Chart(pCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Smart Office (72%)', 'Villa Ph.2 (38%)', 'Interior (15%)', 'Remaining'],
+      datasets: [{
+        data: [72, 38, 15, 175],
+        backgroundColor: ['#2563eb','#10b981','#8b5cf6','rgba(200,225,245,0.3)'],
+        borderColor: 'rgba(255,255,255,0.6)',
+        borderWidth: 3,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          titleColor: '#1a3050', bodyColor: '#4a6a8a',
+          borderColor: 'rgba(74,144,192,0.3)', borderWidth: 1,
+          filter: item => item.dataIndex < 3
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
