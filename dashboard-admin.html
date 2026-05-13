@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard | RoleBase</title>
+  <title>Admin Dashboard | Stackly</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -43,21 +43,20 @@
     }
 
     .sidebar-brand {
-      display: flex; align-items: center; gap: 10px;
-      padding: 0 24px 32px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+      padding: 0 24px 28px;
       border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
-    .brand-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, #4a90c0, #2a6090);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
+    .brand-logo {
+      height: 32px; width: auto;
+      background: rgba(255,255,255,0.93);
+      border-radius: 8px;
+      padding: 4px 10px;
+      display: block;
     }
-    .brand-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; }
 
-    .brand-name { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
-    .brand-role { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; }
+    .brand-role { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; padding-left: 2px; }
 
     .sidebar-nav { flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
 
@@ -108,6 +107,14 @@
 
     .topbar-right { display: flex; align-items: center; gap: 14px; }
 
+    .user-email {
+      font-size: 13px; font-weight: 600; color: #2a5a8a;
+      background: rgba(74,144,192,0.1);
+      border: 1px solid rgba(74,144,192,0.25);
+      border-radius: 20px; padding: 5px 14px;
+      max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
     .avatar {
       width: 40px; height: 40px; border-radius: 50%;
       background: linear-gradient(135deg, #4a90c0, #2a6090);
@@ -129,6 +136,79 @@
       width: 8px; height: 8px; border-radius: 50%;
       background: #ef4444; border: 1.5px solid #fff;
     }
+
+    /* ── DROPDOWNS ── */
+    .drop-wrap { position: relative; }
+
+    .notify-btn { cursor: pointer; border: none; }
+
+    .avatar { cursor: pointer; }
+
+    .dropdown {
+      display: none; position: absolute; top: calc(100% + 10px); right: 0;
+      background: rgba(15,40,80,0.55);
+      backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+      border: 1.5px solid rgba(255,255,255,0.22); border-radius: 18px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.12) inset;
+      z-index: 300; min-width: 285px; overflow: hidden;
+    }
+    .dropdown.open { display: block; }
+
+    .notif-header {
+      padding: 14px 18px 10px; font-size: 13px; font-weight: 700;
+      color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .notif-clear { font-size: 11px; color: rgba(160,210,255,0.9); cursor: pointer; font-weight: 600; }
+    .notif-clear:hover { color: #fff; text-decoration: underline; }
+
+    .notif-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: background 0.15s; cursor: pointer;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: rgba(255,255,255,0.08); }
+    .notif-icon {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15);
+    }
+    .notif-icon svg { width: 16px; height: 16px; }
+    .notif-icon.blue  { color: #7ec8ff; }
+    .notif-icon.green { color: #6ee7b7; }
+    .notif-icon.amber { color: #fcd34d; }
+    .notif-icon.red   { color: #fca5a5; }
+    .notif-text { font-size: 12.5px; color: rgba(255,255,255,0.88); line-height: 1.45; font-weight: 500; }
+    .notif-text strong { color: #fff; }
+    .notif-time { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+
+    .profile-top {
+      padding: 16px 18px; display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .profile-avatar-lg {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg,#4a90c0,#2a6090);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 17px; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    .profile-name { font-size: 14px; font-weight: 700; color: #fff; }
+    .profile-email { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+    .profile-menu-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 18px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.82);
+      cursor: pointer; transition: background 0.15s; border: none; background: none;
+      width: 100%; text-align: left; font-family: inherit;
+    }
+    .profile-menu-item svg { width: 16px; height: 16px; color: rgba(160,210,255,0.9); flex-shrink: 0; }
+    .profile-menu-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .profile-menu-item.danger { color: rgba(255,160,160,0.9); }
+    .profile-menu-item.danger svg { color: rgba(255,160,160,0.9); }
+    .profile-menu-item.danger:hover { background: rgba(255,80,80,0.12); color: #ffb3b3; }
+    .profile-menu-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 4px 0; }
 
     /* ── STAT CARDS ── */
     .stats-grid {
@@ -276,6 +356,56 @@
     .main::-webkit-scrollbar-track { background: transparent; }
     .main::-webkit-scrollbar-thumb { background: rgba(74,144,192,0.3); border-radius: 4px; }
 
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none;
+      position: fixed; top: 14px; left: 14px; z-index: 100;
+      background: rgba(15,40,70,0.88); border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 10px; width: 42px; height: 42px;
+      align-items: center; justify-content: center;
+      cursor: pointer; backdrop-filter: blur(12px); color: #fff; font-size: 20px;
+      transition: background 0.2s;
+    }
+    .hamburger:hover { background: rgba(74,144,192,0.5); }
+
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.48); z-index: 29;
+    }
+    .sidebar-overlay.open { display: block; }
+
+    /* ── SIDEBAR COLLAPSE (desktop) ── */
+    .sidebar {
+      transition: width 0.28s cubic-bezier(0.4,0,0.2,1),
+                  padding 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    .sidebar.collapsed { width: 0; padding: 0; overflow: hidden; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hamburger { display: flex; }
+      body { overflow-y: auto !important; }
+      .layout { height: auto; overflow: visible; }
+      .sidebar {
+        position: fixed !important; left: -260px; top: 0; bottom: 0;
+        height: 100vh; z-index: 30; width: 240px !important;
+        transition: left 0.28s cubic-bezier(0.4,0,0.2,1) !important;
+      }
+      .sidebar.open { left: 0 !important; }
+      .sidebar.collapsed { width: 240px !important; }
+      .main { padding: 76px 18px 130px; }
+      .topbar { flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-grid { grid-template-columns: 1fr; }
+      .content-grid { grid-template-columns: 1fr; }
+      .scroll-strip { left: 0; }
+    }
+    @media (max-width: 520px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .main { padding: 68px 12px 130px; }
+      .topbar h1 { font-size: 18px; }
+    }
+
     /* scroll strip */
     .scroll-strip {
       position: fixed; bottom: 0; left: 240px; right: 0;
@@ -302,6 +432,8 @@
       from { transform: translateX(0); }
       to   { transform: translateX(-50%); }
     }
+    .section { display: none; }
+    .section.active { display: block; }
   </style>
 </head>
 <body>
@@ -345,48 +477,46 @@
   <path d="M-10,900 L-10,732 L88,668 L176,728 L268,638 L358,708 L452,596 L548,672 L644,628 L740,688 L836,638 L932,702 L1028,648 L1124,714 L1220,662 L1316,724 L1450,702 L1450,900 Z" fill="url(#m3G)"/>
 </svg>
 
+<button class="hamburger" id="hamburger" aria-label="Open menu">&#9776;</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="layout">
 
   <!-- ── SIDEBAR ── -->
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      </div>
-      <div>
-        <div class="brand-name">RoleBase</div>
-        <div class="brand-role">Admin Panel</div>
-      </div>
+      <a href="login.html"><img src="assets/stackly-logo (1).webp" alt="Stackly" class="brand-logo" /></a>
+      <div class="brand-role">Admin Panel</div>
     </div>
 
     <nav class="sidebar-nav">
       <span class="nav-label">Main</span>
-      <a class="nav-item active" href="#">
+      <button class="nav-item active" data-sec="dashboard" onclick="showSec('dashboard')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         Dashboard
-      </a>
-      <a class="nav-item" href="404.html">
+      </button>
+      <button class="nav-item" data-sec="clients" onclick="showSec('clients')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Clients
-      </a>
-      <a class="nav-item" href="404.html">
+      </button>
+      <button class="nav-item" data-sec="projects" onclick="showSec('projects')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
         Projects
-      </a>
-      <a class="nav-item" href="404.html">
+      </button>
+      <button class="nav-item" data-sec="revenue" onclick="showSec('revenue')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         Revenue
-      </a>
+      </button>
 
       <span class="nav-label">System</span>
-      <a class="nav-item" href="404.html">
+      <button class="nav-item" data-sec="reports" onclick="showSec('reports')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
         Reports
-      </a>
-      <a class="nav-item" href="404.html">
+      </button>
+      <button class="nav-item" data-sec="settings" onclick="showSec('settings')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 1 4.93 19.07 10 10 0 0 1 19.07 4.93"/></svg>
         Settings
-      </a>
+      </button>
     </nav>
 
     <div class="sidebar-footer">
@@ -405,14 +535,65 @@
         <p>Welcome back, Admin. Here's what's happening today.</p>
       </div>
       <div class="topbar-right">
-        <div class="notify-btn">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <div class="notify-dot"></div>
+        <span class="user-email" id="userEmail"></span>
+
+        <!-- Bell -->
+        <div class="drop-wrap">
+          <div class="notify-btn" id="notifBtn">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div class="notify-dot" id="notifDot"></div>
+          </div>
+          <div class="dropdown" id="notifDropdown">
+            <div class="notif-header">
+              Notifications
+              <span class="notif-clear" onclick="clearNotifs()">Mark all read</span>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon blue"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <div><div class="notif-text">New client <strong>Arun Kumar</strong> registered</div><div class="notif-time">2 hours ago</div></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon green"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>
+              <div><div class="notif-text">Project <strong>Smart Office Design</strong> marked complete</div><div class="notif-time">5 hours ago</div></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon amber"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div><div class="notif-text">Invoice <strong>#INV-2048</strong> paid — ₹45,000</div><div class="notif-time">Yesterday</div></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-icon red"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+              <div><div class="notif-text">17 reports remain <strong>unresolved</strong></div><div class="notif-time">2 days ago</div></div>
+            </div>
+          </div>
         </div>
-        <div class="avatar">A</div>
+
+        <!-- Avatar -->
+        <div class="drop-wrap">
+          <div class="avatar" id="avatarBtn">A</div>
+          <div class="dropdown" id="profileDropdown">
+            <div class="profile-top">
+              <div class="profile-avatar-lg" id="profileAvatarLg">A</div>
+              <div>
+                <div class="profile-name" id="profileNameLabel">Admin</div>
+                <div class="profile-email" id="profileEmailLabel"></div>
+              </div>
+            </div>
+            <button class="profile-menu-item" onclick="showSec('settings');closeDropdowns()">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 1 4.93 19.07 10 10 0 0 1 19.07 4.93"/></svg>
+              Settings
+            </button>
+            <div class="profile-menu-divider"></div>
+            <button class="profile-menu-item danger" onclick="window.location.href='login.html'">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
 
+    <div id="sec-dashboard" class="section active">
     <!-- STAT CARDS -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -584,34 +765,170 @@
       </div>
 
     </div>
+    </div><!-- end sec-dashboard -->
+
+    <div id="sec-clients" class="section">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">All Clients</span></div>
+        <table><thead><tr><th>Client</th><th>Project</th><th>Status</th><th>Joined</th></tr></thead>
+        <tbody>
+          <tr><td><div class="client-name">Arun Kumar</div><div class="client-email">arun@example.com</div></td><td>Smart Office Design</td><td><span class="badge active">Active</span></td><td>12 May 2026</td></tr>
+          <tr><td><div class="client-name">Priya Sharma</div><div class="client-email">priya@example.com</div></td><td>Residential Complex</td><td><span class="badge pending">Pending</span></td><td>10 May 2026</td></tr>
+          <tr><td><div class="client-name">Rahul Mehta</div><div class="client-email">rahul@example.com</div></td><td>Mall Architecture</td><td><span class="badge active">Active</span></td><td>08 May 2026</td></tr>
+          <tr><td><div class="client-name">Sneha Pillai</div><div class="client-email">sneha@example.com</div></td><td>Interior Planning</td><td><span class="badge inactive">Inactive</span></td><td>05 May 2026</td></tr>
+          <tr><td><div class="client-name">Dev Nair</div><div class="client-email">dev@example.com</div></td><td>Commercial Tower</td><td><span class="badge active">Active</span></td><td>02 May 2026</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div id="sec-projects" class="section">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">All Projects</span></div>
+        <table><thead><tr><th>Project</th><th>Client</th><th>Status</th><th>Progress</th></tr></thead>
+        <tbody>
+          <tr><td>Smart Office Design</td><td>Arun Kumar</td><td><span class="badge active">Active</span></td><td>72%</td></tr>
+          <tr><td>Residential Complex</td><td>Priya Sharma</td><td><span class="badge pending">Pending</span></td><td>15%</td></tr>
+          <tr><td>Mall Architecture</td><td>Rahul Mehta</td><td><span class="badge active">Active</span></td><td>55%</td></tr>
+          <tr><td>Interior Planning</td><td>Sneha Pillai</td><td><span class="badge inactive">Inactive</span></td><td>0%</td></tr>
+          <tr><td>Commercial Tower</td><td>Dev Nair</td><td><span class="badge active">Active</span></td><td>38%</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div id="sec-revenue" class="section">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Revenue Overview</span><span style="font-size:12px;color:#6a90aa;">Last 7 months</span></div>
+        <div class="chart-wrap"><canvas id="revenueChart2"></canvas></div>
+      </div>
+    </div>
+
+    <div id="sec-reports" class="section">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Reports</span></div>
+        <table><thead><tr><th>Report</th><th>Type</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Monthly Revenue Report</td><td>Finance</td><td>01 May 2026</td><td><span class="badge active">Ready</span></td></tr>
+          <tr><td>Client Growth Analysis</td><td>Analytics</td><td>28 Apr 2026</td><td><span class="badge active">Ready</span></td></tr>
+          <tr><td>Project Completion Rate</td><td>Operations</td><td>20 Apr 2026</td><td><span class="badge pending">Pending</span></td></tr>
+          <tr><td>Overdue Invoices</td><td>Finance</td><td>15 Apr 2026</td><td><span class="badge active">Ready</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div id="sec-settings" class="section">
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Settings</span></div>
+        <div style="display:flex;flex-direction:column;gap:18px;max-width:480px">
+          <div class="field-row" style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#1a3050">Platform Name</label><input type="text" value="RoleBase" style="padding:10px 14px;border-radius:10px;border:1px solid rgba(74,144,192,0.3);font-size:14px;color:#1a3050;background:rgba(255,255,255,0.7)"/></div>
+          <div class="field-row" style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#1a3050">Admin Email</label><input type="email" value="admin@rolebase.io" style="padding:10px 14px;border-radius:10px;border:1px solid rgba(74,144,192,0.3);font-size:14px;color:#1a3050;background:rgba(255,255,255,0.7)"/></div>
+          <div class="field-row" style="display:flex;flex-direction:column;gap:6px"><label style="font-size:13px;font-weight:600;color:#1a3050">Timezone</label><select style="padding:10px 14px;border-radius:10px;border:1px solid rgba(74,144,192,0.3);font-size:14px;color:#1a3050;background:rgba(255,255,255,0.7)"><option>Asia/Kolkata (IST)</option><option>UTC</option><option>America/New_York</option></select></div>
+          <button style="align-self:flex-start;padding:10px 28px;border-radius:10px;background:linear-gradient(135deg,#4a90c0,#2a6090);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer">Save Changes</button>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
 <!-- SCROLL STRIP -->
 <div class="scroll-strip">
   <div class="scroll-track">
-    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="assets/thumb-1.webp" alt="Architecture"/>
+    <img src="assets/thumb-2.webp" alt="Architecture"/>
+    <img src="assets/thumb-3.webp" alt="Architecture"/>
+    <img src="assets/thumb-4.webp" alt="Architecture"/>
+    <img src="assets/thumb-5.webp" alt="Architecture"/>
+    <img src="assets/thumb-6.webp" alt="Architecture"/>
+    <img src="assets/thumb-8.webp" alt="Architecture"/>
+    <img src="assets/thumb-9.webp" alt="Architecture"/>
+    <img src="assets/thumb-10.webp" alt="Architecture"/>
+    <img src="assets/thumb-1.webp" alt="Architecture"/>
+    <img src="assets/thumb-2.webp" alt="Architecture"/>
+    <img src="assets/thumb-3.webp" alt="Architecture"/>
+    <img src="assets/thumb-4.webp" alt="Architecture"/>
+    <img src="assets/thumb-5.webp" alt="Architecture"/>
+    <img src="assets/thumb-6.webp" alt="Architecture"/>
+    <img src="assets/thumb-8.webp" alt="Architecture"/>
+    <img src="assets/thumb-9.webp" alt="Architecture"/>
+    <img src="assets/thumb-10.webp" alt="Architecture"/>
   </div>
 </div>
 
 <script>
+  /* ── Credentials ── */
+  (function() {
+    const email = localStorage.getItem('rb_email') || '';
+    const name = email
+      ? email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+      : 'Admin';
+    const avatarEl   = document.querySelector('.avatar');
+    const greetEl    = document.querySelector('.topbar p');
+    const emailLabel = document.getElementById('userEmail');
+    if (avatarEl)   avatarEl.textContent   = name[0].toUpperCase();
+    if (greetEl)    greetEl.textContent    = `Welcome back, ${name}. Here's what's happening today.`;
+    if (emailLabel) emailLabel.textContent = email || 'Guest';
+    const palg = document.getElementById('profileAvatarLg');
+    const pname = document.getElementById('profileNameLabel');
+    const pemail = document.getElementById('profileEmailLabel');
+    if (palg)   palg.textContent   = name[0].toUpperCase();
+    if (pname)  pname.textContent  = name;
+    if (pemail) pemail.textContent = email || 'Guest';
+  })();
+
+  /* ── Dropdowns ── */
+  function closeDropdowns() {
+    document.getElementById('notifDropdown').classList.remove('open');
+    document.getElementById('profileDropdown').classList.remove('open');
+  }
+  document.getElementById('notifBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('notifDropdown');
+    const wasOpen = dd.classList.contains('open');
+    closeDropdowns();
+    if (!wasOpen) dd.classList.add('open');
+  });
+  document.getElementById('avatarBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('profileDropdown');
+    const wasOpen = dd.classList.contains('open');
+    closeDropdowns();
+    if (!wasOpen) dd.classList.add('open');
+  });
+  document.addEventListener('click', closeDropdowns);
+  function clearNotifs() {
+    document.getElementById('notifDot').style.display = 'none';
+    document.querySelectorAll('.notif-item').forEach(n => n.style.opacity = '0.45');
+  }
+
+  /* ── Sidebar Toggle ── */
+  const ham         = document.getElementById('hamburger');
+  const overlay     = document.getElementById('sidebarOverlay');
+  const sidebar     = document.querySelector('.sidebar');
+  const scrollStrip = document.querySelector('.scroll-strip');
+
+  ham.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  });
+
+  /* ── Section Navigation ── */
+  function showSec(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('sec-' + name);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const btn = document.querySelector(`.nav-item[data-sec="${name}"]`);
+    if (btn) btn.classList.add('active');
+    if (window.innerWidth <= 900) {
+      document.querySelector('.sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+  }
+
   /* ── Revenue Area Chart ── */
   const rCtx = document.getElementById('revenueChart').getContext('2d');
   const rGrad = rCtx.createLinearGradient(0, 0, 0, 200);
@@ -627,6 +944,50 @@
         data: [210000, 285000, 248000, 320000, 295000, 378000, 420000],
         fill: true,
         backgroundColor: rGrad,
+        borderColor: '#4a90c0',
+        borderWidth: 2.5,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: '#4a90c0',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        tension: 0.45
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          titleColor: '#1a3050', bodyColor: '#4a6a8a',
+          borderColor: 'rgba(74,144,192,0.3)', borderWidth: 1,
+          callbacks: { label: ctx => ' ₹' + (ctx.raw/1000).toFixed(0) + 'K' }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.15)' }, ticks: { color: '#6a90aa', font: { size: 11 } } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.15)' },
+          ticks: { color: '#6a90aa', font: { size: 11 }, callback: v => '₹' + (v/1000) + 'K' }
+        }
+      }
+    }
+  });
+
+  /* ── Revenue Chart 2 (sec-revenue) ── */
+  const rCtx2 = document.getElementById('revenueChart2').getContext('2d');
+  const rGrad2 = rCtx2.createLinearGradient(0, 0, 0, 200);
+  rGrad2.addColorStop(0, 'rgba(74,144,192,0.45)');
+  rGrad2.addColorStop(1, 'rgba(74,144,192,0)');
+  new Chart(rCtx2, {
+    type: 'line',
+    data: {
+      labels: ['Nov','Dec','Jan','Feb','Mar','Apr','May'],
+      datasets: [{
+        label: 'Revenue (₹)',
+        data: [210000, 285000, 248000, 320000, 295000, 378000, 420000],
+        fill: true,
+        backgroundColor: rGrad2,
         borderColor: '#4a90c0',
         borderWidth: 2.5,
         pointBackgroundColor: '#fff',

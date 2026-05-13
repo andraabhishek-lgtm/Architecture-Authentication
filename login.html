@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login | RoleBase</title>
+  <title>Login | Stackly</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -54,39 +54,20 @@
       );
     }
 
-    /* ── NAVBAR ── */
-    nav {
+    /* ── SITE LOGO ── */
+    .site-logo {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 20px 52px;
-      gap: 36px;
-      background: rgba(8, 20, 50, 0.35);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      top: 18px; left: 24px;
+      z-index: 25;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 6px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     }
-
-    nav a {
-      color: rgba(255,255,255,0.82);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.8px;
-      transition: color 0.2s;
-    }
-    nav a:hover { color: #fff; }
-
-    .nav-active {
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.42);
-      border-radius: 20px;
-      padding: 6px 20px;
-      backdrop-filter: blur(8px);
-    }
+    .site-logo { cursor: pointer; text-decoration: none; }
+    .site-logo img { height: 30px; width: auto; display: block; }
 
     /* ── CENTERED PAGE ── */
     .page {
@@ -165,6 +146,24 @@
     }
 
     .field-icon svg { width: 18px; height: 18px; }
+
+    .eye-btn {
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; padding: 4px;
+      color: rgba(255,255,255,0.55); display: flex; align-items: center;
+      transition: color 0.2s;
+    }
+    .eye-btn:hover { color: rgba(255,255,255,0.9); }
+    .eye-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,0.75); font-size: 13px; font-weight: 600;
+      text-decoration: none; margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: #fff; }
+    .back-btn svg { width: 16px; height: 16px; }
 
     .err-msg {
       font-size: 12px;
@@ -367,40 +366,58 @@
       opacity: 0; transition: opacity 0.3s;
       pointer-events: none; white-space: nowrap;
     }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      body { overflow-y: auto; }
+      .page { padding: 20px 16px 30px; align-items: center; }
+      .glass-card { padding: 36px 28px 30px; }
+      .glass-card h2 { font-size: 22px; letter-spacing: 2px; margin-bottom: 24px; }
+    }
+    @media (max-width: 480px) {
+      .glass-card { padding: 28px 18px 24px; border-radius: 20px; }
+      .glass-card h2 { font-size: 20px; margin-bottom: 20px; }
+      .field input { font-size: 13px; padding: 11px 40px 11px 14px; }
+      .field-select select { font-size: 13px; padding: 11px 36px 11px 14px; }
+      .btn-login { font-size: 14px; padding: 12px; }
+    }
   </style>
 </head>
 <body>
 
-<!-- ── SWIPER BACKGROUND ── -->
+<a href="login.html" class="site-logo">
+  <img src="assets/stackly-logo (1).webp" alt="Stackly" />
+</a>
+
 <div class="bg-swiper">
   <div class="swiper" id="bgSwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-1.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-2.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-3.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-4.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-5.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-6.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-7.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-8.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://thumbs.dreamstime.com/z/architectural-concept-sketch-modern-building-abstract-multi-level-structure-suggesting-pre-construction-design-phase-ai-327715454.jpg?w=992" alt="Architecture Sketch"/>
+        <img src="assets/hero-sketch.webp" alt="Architecture Sketch"/>
       </div>
     </div>
     <div class="swiper-pagination"></div>
@@ -409,15 +426,6 @@
 
 <!-- Dark overlay -->
 <div class="bg-overlay"></div>
-
-<!-- ── NAVBAR ── -->
-<nav>
-  <a href="#">HOME</a>
-  <a href="404.html">ABOUT</a>
-  <a href="404.html">SERVICE</a>
-  <a href="404.html">CONTACT</a>
-  <a href="login.html" class="nav-active">LOGIN</a>
-</nav>
 
 <!-- ── LOGIN CARD ── -->
 <div class="page">
@@ -448,17 +456,17 @@
 
       <div class="field">
         <input type="password" id="password" placeholder="Password" autocomplete="current-password"/>
-        <span class="field-icon">
-          <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+        <button type="button" class="eye-btn" onclick="togglePw()" aria-label="Show password">
+          <svg id="eyeIcon" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
           </svg>
-        </span>
+        </button>
         <div class="err-msg" id="pwErr">Please enter your password.</div>
       </div>
 
       <div class="forgot-row">
-        <a href="#">Forgot Password?</a>
+        <a href="404.html">Forgot Password?</a>
       </div>
 
       <div class="remember-row">
@@ -481,27 +489,27 @@
 <!-- ── SCROLLING ARCHITECTURE IMAGES ── -->
 <!-- <div class="scroll-strip">
   <div class="scroll-track" id="scrollTrack">
-    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="assets/thumb-1.webp" alt="Architecture"/>
+    <img src="assets/thumb-2.webp" alt="Architecture"/>
+    <img src="assets/thumb-3.webp" alt="Architecture"/>
+    <img src="assets/thumb-4.webp" alt="Architecture"/>
+    <img src="assets/thumb-5.webp" alt="Architecture"/>
+    <img src="assets/thumb-6.webp" alt="Architecture"/>
+    <img src="assets/thumb-7.webp" alt="Architecture"/>
+    <img src="assets/thumb-8.webp" alt="Architecture"/>
+    <img src="assets/thumb-9.webp" alt="Architecture"/>
+    <img src="assets/thumb-10.webp" alt="Architecture"/>
     <!-- duplicate for seamless loop -->
-    <!-- <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <!-- <img src="assets/thumb-1.webp" alt="Architecture"/>
+    <img src="assets/thumb-2.webp" alt="Architecture"/>
+    <img src="assets/thumb-3.webp" alt="Architecture"/>
+    <img src="assets/thumb-4.webp" alt="Architecture"/>
+    <img src="assets/thumb-5.webp" alt="Architecture"/>
+    <img src="assets/thumb-6.webp" alt="Architecture"/>
+    <img src="assets/thumb-7.webp" alt="Architecture"/>
+    <img src="assets/thumb-8.webp" alt="Architecture"/>
+    <img src="assets/thumb-9.webp" alt="Architecture"/>
+    <img src="assets/thumb-10.webp" alt="Architecture"/>
   </div>
 </div> --> 
 
@@ -510,7 +518,7 @@
   new Swiper('#bgSwiper', {
     loop: true,
     speed: 1000,
-    autoplay: { delay: 1000, disableOnInteraction: false },
+    autoplay: { delay: 4000, disableOnInteraction: false },
     effect: 'fade',
     fadeEffect: { crossFade: true },
     pagination: { el: '.swiper-pagination', clickable: true },
@@ -541,11 +549,25 @@
     }
 
     if (valid) {
+      localStorage.setItem('rb_email', email.value.trim());
+      localStorage.setItem('rb_role', role.value);
       window.location.href = role.value === 'admin'
         ? 'dashboard-admin.html'
         : 'dashboard-client.html';
     }
   });
+
+  function togglePw() {
+    const input = document.getElementById('password');
+    const icon  = document.getElementById('eyeIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = `<path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    } else {
+      input.type = 'password';
+      icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    }
+  }
 
   function showToast(msg) {
     const t = document.getElementById('toast');

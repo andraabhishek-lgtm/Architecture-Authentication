@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign Up | RoleBase</title>
+  <title>Sign Up | Stackly</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -56,21 +56,20 @@
       );
     }
 
-    /* ── NAVBAR ── */
-    nav {
+    /* ── SITE LOGO ── */
+    .site-logo {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 20px 52px;
-      gap: 36px;
-      background: rgba(8, 20, 50, 0.35);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      top: 18px; left: 24px;
+      z-index: 25;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 12px;
+      padding: 6px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     }
+    .site-logo { cursor: pointer; text-decoration: none; }
+    .site-logo img { height: 30px; width: auto; display: block; }
 
     nav a {
       color: rgba(255,255,255,0.82);
@@ -208,6 +207,15 @@
     }
     .eye-btn:hover { color: #fff; }
     .eye-btn svg { width: 17px; height: 17px; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,0.75); font-size: 13px; font-weight: 600;
+      text-decoration: none; margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: #fff; }
+    .back-btn svg { width: 16px; height: 16px; }
 
     /* strength bar */
     .strength-bar { display: flex; gap: 4px; margin-top: 7px; }
@@ -364,41 +372,53 @@
       pointer-events: none; white-space: nowrap;
     }
 
-    @media (max-width: 520px) {
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
       .glass-card { padding: 36px 28px 32px; }
       .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .glass-card { padding: 28px 18px 24px; border-radius: 20px; }
+      .glass-card h2 { font-size: 20px; }
+      .field input { font-size: 13px; }
+      .two-col { grid-template-columns: 1fr; }
+      .social-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
 
 <!-- ── SWIPER BACKGROUND ── -->
+<a href="login.html" class="site-logo">
+  <img src="assets/stackly-logo (1).webp" alt="Stackly" />
+</a>
+
 <div class="bg-swiper">
   <div class="swiper" id="bgSwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-9.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-10.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-1.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-5.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-8.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-6.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1600&q=85" alt="Architecture"/>
+        <img src="assets/hero-2.webp" alt="Architecture"/>
       </div>
       <div class="swiper-slide">
-        <img src="https://thumbs.dreamstime.com/z/architectural-concept-sketch-modern-building-abstract-multi-level-structure-suggesting-pre-construction-design-phase-ai-327715454.jpg?w=992" alt="Architecture Sketch"/>
+        <img src="assets/hero-sketch.webp" alt="Architecture Sketch"/>
       </div>
     </div>
     <div class="swiper-pagination"></div>
@@ -408,18 +428,13 @@
 <!-- Dark overlay -->
 <div class="bg-overlay"></div>
 
-<!-- ── NAVBAR ── -->
-<nav>
-  <a href="login.html">HOME</a>
-  <a href="404.html">ABOUT</a>
-  <a href="404.html">SERVICE</a>
-  <a href="404.html">CONTACT</a>
-  <a href="login.html" class="nav-pill">LOGIN</a>
-</nav>
-
 <!-- ── SIGNUP CARD ── -->
 <div class="page">
   <div class="glass-card">
+    <a href="login.html" class="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </a>
     <h2>Sign Up</h2>
     <p class="sub">Create your free account today</p>
 
@@ -484,7 +499,7 @@
       <div class="terms-row">
         <input type="checkbox" id="terms"/>
         <label for="terms">
-          I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+          I agree to the <a href="404.html">Terms of Service</a> and <a href="404.html">Privacy Policy</a>
         </label>
       </div>
       <div class="terms-err" id="termsErr">You must agree to continue.</div>
@@ -529,27 +544,27 @@
 <!-- ── SCROLLING ARCHITECTURE IMAGES ── -->
 <!-- <div class="scroll-strip">
   <div class="scroll-track">
-    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <img src="assets/thumb-1.webp" alt="Architecture"/>
+    <img src="assets/thumb-2.webp" alt="Architecture"/>
+    <img src="assets/thumb-3.webp" alt="Architecture"/>
+    <img src="assets/thumb-4.webp" alt="Architecture"/>
+    <img src="assets/thumb-5.webp" alt="Architecture"/>
+    <img src="assets/thumb-6.webp" alt="Architecture"/>
+    <img src="assets/thumb-7.webp" alt="Architecture"/>
+    <img src="assets/thumb-8.webp" alt="Architecture"/>
+    <img src="assets/thumb-9.webp" alt="Architecture"/>
+    <img src="assets/thumb-10.webp" alt="Architecture"/>
     <!-- duplicate for seamless loop -->
-    <!-- <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1464146072-1ef35d2d5895?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
-    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=300&h=180&q=75" alt="Architecture"/>
+    <!-- <img src="assets/thumb-1.webp" alt="Architecture"/>
+    <img src="assets/thumb-2.webp" alt="Architecture"/>
+    <img src="assets/thumb-3.webp" alt="Architecture"/>
+    <img src="assets/thumb-4.webp" alt="Architecture"/>
+    <img src="assets/thumb-5.webp" alt="Architecture"/>
+    <img src="assets/thumb-6.webp" alt="Architecture"/>
+    <img src="assets/thumb-7.webp" alt="Architecture"/>
+    <img src="assets/thumb-8.webp" alt="Architecture"/>
+    <img src="assets/thumb-9.webp" alt="Architecture"/>
+    <img src="assets/thumb-10.webp" alt="Architecture"/>
   </div>
 </div> --> 
 
@@ -558,7 +573,7 @@
   new Swiper('#bgSwiper', {
     loop: true,
     speed: 1000,
-    autoplay: { delay: 1000, disableOnInteraction: false },
+    autoplay: { delay: 4000, disableOnInteraction: false },
     effect: 'fade',
     fadeEffect: { crossFade: true },
     pagination: { el: '.swiper-pagination', clickable: true },
@@ -625,7 +640,10 @@
     termsErr.style.display = 'none';
     if (!terms.checked) { termsErr.style.display = 'block'; valid = false; }
 
-    if (valid) showToast('Account created! Welcome to RoleBase.');
+    if (valid) {
+      showToast('Account created! Redirecting to login...');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1800);
+    }
   });
 
   function lettersOnly(input, errId) {
