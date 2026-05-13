@@ -228,6 +228,7 @@
       margin-bottom: 20px;
     }
     .chart-wrap { position: relative; height: 190px; }
+    .chart-donut { height: 150px; width: 150px; }
 
     /* content grid */
     .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -239,6 +240,7 @@
       border: 1.5px solid rgba(255,255,255,0.45);
       border-radius: 18px; padding: 20px 22px;
       box-shadow: 0 4px 24px rgba(30,80,130,0.1);
+      overflow: hidden;
     }
     .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .panel-title  { font-size: 15px; font-weight: 700; color: #1a3050; }
@@ -305,7 +307,7 @@
     /* ── HAMBURGER ── */
     .hamburger {
       display: none;
-      position: fixed; top: 14px; left: 14px; z-index: 100;
+      position: fixed; top: 14px; left: 14px; z-index: 500;
       background: rgba(10,35,60,0.88); border: 1px solid rgba(255,255,255,0.22);
       border-radius: 10px; width: 42px; height: 42px;
       align-items: center; justify-content: center;
@@ -335,23 +337,42 @@
       .sidebar {
         position: fixed !important; left: -260px; top: 0; bottom: 0;
         height: 100vh; z-index: 30; width: 240px !important;
+        padding-top: 70px !important;
         transition: left 0.28s cubic-bezier(0.4,0,0.2,1) !important;
       }
       .sidebar.open { left: 0 !important; }
       .sidebar.collapsed { width: 240px !important; }
-      .main { padding: 76px 18px 130px; }
-      .topbar { flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+      .main { padding: 76px 16px 130px; }
+      .topbar {
+        flex-wrap: nowrap; gap: 8px; margin-bottom: 18px;
+        padding-left: 58px; align-items: center;
+      }
+      .topbar-left { flex: 1; min-width: 0; }
+      .topbar h1 { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .topbar p { display: none; }
+      .topbar-right { gap: 8px; flex-shrink: 0; }
+      .user-email { display: none; }
       .welcome-banner { flex-direction: column; gap: 16px; text-align: center; padding: 20px; }
       .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-      .chart-grid { grid-template-columns: 1fr; }
-      .content-grid { grid-template-columns: 1fr; }
+      .chart-grid { grid-template-columns: 1fr !important; }
+      .content-grid { grid-template-columns: 1fr !important; }
+      .chart-wrap { height: 180px !important; width: 100% !important; }
+      .panel[style*="align-items:center"] { flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; gap: 12px; }
       .scroll-strip { left: 0 !important; }
     }
     @media (max-width: 520px) {
       .stats-grid { grid-template-columns: 1fr !important; }
-      .main { padding: 68px 12px 130px; }
-      .topbar h1 { font-size: 18px; }
+      .main { padding: 68px 10px 130px; }
+      .topbar { padding-left: 56px; }
+      .topbar h1 { font-size: 15px; }
+      .chart-wrap { height: 160px !important; }
       .welcome-banner { padding: 16px; }
+      .dropdown {
+        position: fixed !important;
+        top: 66px !important; left: 10px !important; right: 10px !important;
+        min-width: unset !important; width: auto !important;
+      }
+      .notify-btn, .avatar { width: 34px; height: 34px; }
     }
 
     /* scroll strip */
@@ -455,7 +476,7 @@
   <main class="main">
 
     <div class="topbar">
-      <div>
+      <div class="topbar-left">
         <h1>Welcome, Arun 👋</h1>
         <p>Here's an overview of your projects and account.</p>
       </div>
@@ -576,7 +597,7 @@
         <div class="panel-header" style="width:100%">
           <span class="panel-title">Project Progress</span>
         </div>
-        <div class="chart-wrap" style="height:150px;width:150px">
+        <div class="chart-wrap chart-donut">
           <canvas id="progressChart"></canvas>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;justify-content:center">
@@ -822,18 +843,21 @@
   }
 
   /* ── Sidebar Toggle ── */
-  const ham         = document.getElementById('hamburger');
-  const overlay     = document.getElementById('sidebarOverlay');
-  const sidebar     = document.querySelector('.sidebar');
+  const ham     = document.getElementById('hamburger');
+  const overlay = document.getElementById('sidebarOverlay');
+  const sidebar = document.querySelector('.sidebar');
 
-  ham.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('open');
+  function openSidebar()  { sidebar.classList.add('open');    overlay.classList.add('open'); }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+
+  ham.addEventListener('click', function(e) {
+    e.stopPropagation();
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
   });
 
-  overlay.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('open');
+  overlay.addEventListener('click', function(e) {
+    e.stopPropagation();
+    closeSidebar();
   });
 
   /* ── Section Navigation ── */
@@ -844,10 +868,7 @@
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const btn = document.querySelector(`.nav-item[data-sec="${name}"]`);
     if (btn) btn.classList.add('active');
-    if (window.innerWidth <= 900) {
-      document.querySelector('.sidebar').classList.remove('open');
-      document.getElementById('sidebarOverlay').classList.remove('open');
-    }
+    if (window.innerWidth <= 900) closeSidebar();
   }
 
   /* ── Monthly Spending Bar Chart ── */
